@@ -1,0 +1,106 @@
+Handling events
+So far we have only looked at React apps that are "static": 
+they don't respond to user input. This lesson we will look at 
+making our apps dynamic.
+
+Recap: First-class functions in JavaScrip
+Before we look more at React we need to recap a concept in JavaScript. 
+You may remember that functions in JavaScript are "first class" - that means 
+we can pass a reference to a function (as a variable) and then call it elsewhere. 
+Let's look at an example
+
+function hello() {
+  return "Hello!";
+}
+
+console.log(hello); // Logs: "ƒ hello() {}"
+console.log(hello()); // Logs: "Hello!"
+
+
+In the example above hello is a reference to a function. In the first console.log 
+we log out the whole function. The function is not called until we use parentheses (), 
+so we only log the string "Hello!" in the second console.log.
+This is a really important and useful in React, as we can make a function and pass
+it to React so that it can call it when a user interacts with our app.
+
+
+Event handlers in components
+In previous lessons (not React) we learned how to attach 
+event listeners with addEventListener:
+
+// Create an event handler
+function logWhenClicked() {
+  console.log("buttonElement was clicked!");
+}
+
+// Listen for events and call the event handler when triggered
+buttonElement.addEventListener("click", logWhenClicked);
+
+We still need to listen to events in React,
+but event handlers are set up in a slightly different way
+
+function ClickLogger() {
+  function logWhenClicked() {
+    console.log("Button was clicked!");
+  }
+
+  return <button onClick={logWhenClicked}>Click me!</button>;
+}
+
+Every element in React has some special props that start with on 
+that can be assigned to a function which will be called when the event is triggered.
+
+Here's a few examples (a full list is available here):
+
+onClick - the element was clicked
+onCopy - the clipboard is used to copy some text
+onKeyDown - a key is pressed down
+onBlur - the element loses "focus"
+onChange - only available for <input> & <select> (and a few others), triggered when changed
+onDoubleClick - the element was double-clicked!
+onPlay - a video starts playing
+onSubmit - a form element is submitted
+Notice that just like with addEventListener above, we pass the
+function reference to onClick instead of calling the function.
+If we call the function, it will run the function when we render,
+not when the user clicks on the button.
+(Remember that rendering is the term in React for inserting into the DOM).
+
+NOTE
+Think of it like this: we give the event handler to React, 
+so that React can call our function when the element is clicked.
+
+Passing Functions as Props
+Sometimes we need to pass a function to another component as a prop, so that 
+it can handle the event.
+
+A common example for this is a Button component. This component adds some styling 
+to a normal <button>, but still needs to be able to pass an event handler function 
+to onClick. Let's look at an example
+
+function ClickLoggerApp() {
+  function logWhenClicked() {
+    console.log("Button was clicked");
+  }
+
+  return (
+    <div>
+      <FancyButton handleClick={logWhenClicked} />
+      <p>Then look in the console.</p>
+    </div>
+  );
+}
+
+function FancyButton(props) {
+  return (
+    <button className="my-fancy-classname" onClick={props.handleClick}>
+      Click Me!
+    </button>
+  );
+}
+
+Notice how this is very similar to the example above where 
+we created the handler and used it in the same component?
+The only difference here is that we are passing the function
+reference through a prop. We could even pass it through multiple
+components as props.
