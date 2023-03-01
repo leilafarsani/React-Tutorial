@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=R, initial-scale=1.0" />
+    <script
+      crossorigin
+      src="https://unpkg.com/react@18/umd/react.development.js"
+    ></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"
+    ></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <title>React Tutorial</title>
+  </head>
+  <body>
+    <h1>Hello</h1>
+    <div id="banner"></div>
+
+    <footer>
+      <p>Footer</p>
+    </footer>
+    <!--
+      Creating a component and templates inside it
+    -->
+    <script type="text/babel">
+      const Banner = () => {
+        //Creating a Template
+        return (
+          <div>
+            <p>Banner Here</p>
+          </div>
+        );
+        // using an object (ReactDom) and the render method to render the component
+        // above on the DOM (or the div with the id of banner in this case).
+
+        // ReactDom.render() takes two arguments
+        // 1.The component (it should be in the self-closed tag)
+        // 2. the element that component is supposed to render on it(It should be selected )
+      };
+       ReactDOM.render(<Banner />, document.getElementById("banner"));
+    </script>
+  </body>
+</html>

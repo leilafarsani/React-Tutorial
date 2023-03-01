@@ -1,0 +1,22 @@
+# React-Tutorial-Notes
+CDN Content Delivery Network
+Babel is a compiler for JS
+Babel is a toolchain that is mainly used to convert ECMAScript 2015+ code into
+a backwards compatible version of JavaScript in current and older browsers or environments.
+Here are the main things Babel can do for you:
+-Transform syntax
+-Polyfill features that are missing in your target environment 
+(through a third-party polyfill such as core-js)
+-Source code transformations (codemods)
+-And more! 
+
+Component is like a function in JS that we use functionalities and templates.
+Functionalities could be any codes in JS
+Templates are HTML tags that we use to make any frame, or fronts or etc. 
+However, these templates are used in the form of JSX
+
+What is vanilla JS used for?
+"VanillaJS is a name to refer to using plain JavaScript without any additional 
+libraries like jQuery back in the days. People use it as a joke to remind other 
+developers that many things can be done nowadays without the need for additional 
+JavaScript libraries."
