@@ -168,3 +168,72 @@ let useState = React.useState;
 In fact we can just write React.useState in our component if we want! 
 But to type a bit less code, we import it (using the curly braces)
 once and then can just use useState.
+
+Using useState
+Now let's look at how we can use the useState Hook 
+
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  return <p>You clicked {count} times</p>;
+}
+
+Let's break this down into small pieces.
+ First, let's look at calling the useState function:
+
+ useState(0);
+
+ This initialises the state variable to 0. 
+ Any parameter passed to useState will be used as the initial value.
+
+Next, let's look at how we render the state variable in our component:
+
+return <p>You clicked {count} times</p>;
+
+count is just a variable, so to insert it into our JSX 
+we treat it like any other variable: we use curly braces.
+
+Finally, let's look at how we get hold of the count variable:
+
+const [count, setCount] = useState(0);
+
+If you remember back to JS Core 3 Week 3, 
+we covered destructuring. As a reminder, you can assign 
+variables to parts of an array with destructuring:
+
+let [firstWord, secondWord, thirdWord, fourthWord] = [
+  "Hello",
+  "Code",
+  "Your",
+  "Future",
+];
+console.log(firstWord); // Prints "Hello"
+console.log(secondWord); // Prints "Code"
+console.log(thirdWord); // Prints "Your"
+console.log(fourthWord); // Prints "Future"
+
+In React, useState will always return an array with two items. 
+The first item in the array is the current value of the count state. 
+In our example it will be 0 on the first render. 
+The second item in the array is a function that we will use
+to update our state.
+
+NOTE
+Follow the useState naming convention.
+
+When we destructure an array, we can name the variables whatever 
+we want, but there is a naming convention when destructuring the 
+useState array. The first variable should be named whatever your 
+state is called, and the second variable should be the same name 
+but prefixed with set. 
+Let's look at some examples:
+
+const [userIsLoggedIn, setUserIsLoggedIn] = useState(false);
+
+const [username, setUsername] = useState("chris");
+
+const [unreadMessages, setUnreadMessages] = useState(5);
+
+
+
+
