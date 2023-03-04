@@ -137,3 +137,34 @@ figure out exactly the right bits of the DOM that need to be changed,
 a concept called the "virtual DOM". This makes it extremely efficient 
 and fast.
 
+State
+State is a general concept in software engineering.
+It is used when a part of your app needs to "remember" 
+something that changes when people interact with it.
+
+React Hooks
+React has built-in functionality for initialising and updating 
+state in our components. We will access state via a React Hook called useState.
+Hooks are a new-ish feature in React. You may find older tutorials 
+that don't use Hooks, but don't panic. The concepts we learn here are the same whether or not you use Hooks. 
+We are looking at Hooks first because they are simpler to learn for beginners.
+
+Importing useState
+To be able to access the useState Hook, we first need to import it from the React package.
+ Let's look at an example (interactive example):
+
+ import React, { useState } from "react";
+console.log(useState);
+
+If we look at the console, useState is just a function. 
+It lives inside the React code that you installed when you created the app.
+
+To reference the useState function in our component, we need to import it from the React code. 
+The curly braces around useState are a bit like writing:
+
+import React from "react";
+let useState = React.useState;
+
+In fact we can just write React.useState in our component if we want! 
+But to type a bit less code, we import it (using the curly braces)
+once and then can just use useState.
