@@ -234,6 +234,264 @@ const [username, setUsername] = useState("chris");
 
 const [unreadMessages, setUnreadMessages] = useState(5);
 
+Updating State
+Our Counter isn't very useful right now! Let's make it more useful
+by getting count to actually count up (interactive example):
 
+function Counter() {
+  const [count, setCount] = useState(0);
 
+  function incrementCount() {
+    setCount(1);
+  }
 
+  return (
+    <div>
+      <button onClick={incrementCount}>Click me</button>
+      <p>You clicked {count} times</p>
+    </div>
+  );
+}
+Our component now has a <button>, which will call the 
+incrementCount function when clicked:
+
+<button onClick={incrementCount}>Click me</button>
+
+The incrementCount function calls setCount to set the new state to be 1:
+
+function incrementCount() {
+  setCount(1);
+}
+
+setCount does two things. First, it updates the state that our 
+component is "remembering". Whatever you pass as the argument 
+to setCount will be remembered as the new state.
+It also tells React that the old state that is still shown in 
+the DOM is outdated and so the DOM needs to change. 
+Because of this, React will re-render all of our components to 
+figure out what to change in the DOM.
+
+When re-rendering, React will call our Counter component again,
+but this time when we call useState it will give us the updated 
+state of 1, instead of the initial state of 0:
+
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  ...
+}
+On the second render, count is now set to 1. If we wanted to set the 
+state to a different value, then we pass a different value to setCount.
+
+Setting state based on previous state
+You might have noticed that our Counter app isn't very useful...
+It can only count to 1!
+You might think that we could do something like this
+
+function incrementCount() {
+  setCount(count + 1);
+}
+However, this code has a bug. Let's see what happens if we put 2
+setCount calls within incrementCount
+
+function incrementCount() {
+  setCount(count + 1);
+  setCount(count + 1);
+}
+
+If you click the button, then the counter will only count up to 1. 
+This is because the count variable does not actually update until
+the component re-renders and useState gives a new value of count.
+We can see this if we put a console.log(count) in-between the setCount calls.
+As you can see, count remains at 0, even after we try to update it to 1.
+This means that in the second setCount call we are actually still trying
+to update the state to 1!
+
+To fix this problem, there is another way we can call setCount if
+we always need to get the latest version of state when setting it
+
+function incrementCount() {
+  setCount((c1) => {
+    return c1 + 1;
+  });
+  setCount((c2) => {
+    return c2 + 1;
+  });
+}
+When we pass a callback function to setCount, React will pass
+us the latest version of the count state. In this example, the 
+variables are named c1 and c2 to make it clear that they are 
+different from the count variable. Now if we add console.log(c1)
+and console.log(c2) then we can see that they get the correct values.
+
+Reminder: c1 and c2 are just arbitrary names we pick to be the name
+of the parameter to the function we're passing - we could have called
+them both c, and everything would still work - they're not related to
+each other, as they are defined in different scopes.
+
+TIP
+If you need to calculate the new state based on the old state, then use 
+the callback function to make sure the variable is up-to-date.
+
+Don't mutate State
+As we just learned, setCount updates the state for us,but it also notifies
+React of changes. If you try to just change the count variable without using
+setState, nothing will happen, because React wouldn't be notified of the change. 
+You can only modify (or mutate) state using the setter function 
+Fix the above code 
+
+function Counter() {
+  let [count, setCount] = useState(0);
+
+  function handleClick() {
+    count = count + 1;
+  }
+
+  return (
+    <div>
+      Count: {count}
+      <button onClick={handleClick}>Click</button>
+    </div>
+  );
+}
+
+Where does State live?
+We have talked about how a component "remembers" state. 
+In fact, each component instance remembers separate state 
+from other components. This means we can have multiple 
+different Counters, each with a different state
+
+function App() {
+  return (
+    <div>
+      <Counter />
+      <Counter />
+      <Counter />
+    </div>
+  );
+}
+
+More complex states
+The examples we've looked at so far have used numbers,
+strings and booleans. You can also use arrays and objects
+in state too. Let's take a look at an example 
+
+function ShoppingList() {
+  const [list, setList] = useState([]);
+
+  function addToList() {
+    setList(list.concat("Bread"));
+  }
+
+  return (
+    <p>
+      <button onClick={addToList}>Add item to list</button>
+      {list.map((item, index) => {
+        return <li key={index}>{item}</li>;
+      })}
+    </p>
+  );
+}
+
+In this shopping list example, we're initialising the list 
+state to be an empty array. To display our list we loop 
+through the array and render an <li> for each item in the list.
+
+When we want to add something to the list, we can use the 
+list.concat method to make a new array with the new item. 
+This new array is then set as the new state. Right now,
+our example is not very useful as it can only add Bread 
+to the list! we'll look at how we can allow users to
+write their own items to the list.
+
+Don't use the array push method with state. Instead use 
+the array concat method.
+
+The list.push method won't work here, as this method mutates
+the existing array. React requires a completely new array to
+be set as the new state, otherwise it doesn't realise that the
+value has changed. The concat method works because it copies 
+the whole existing array to a brand new array before it adds 
+the new item.
+
+Setting multiple States
+So far we've only seen an example with one state variable.
+But you can create multiple state variables if you want! 
+Let's see an example
+
+function Weather() {
+  const [temperature, setTemperature] = useState(15);
+  const [conditions, setConditions] = useState("sunny");
+
+  function makeItHotter() {
+    setTemperature(temperature + 1);
+  }
+  function makeItColder() {
+    setTemperature(temperature - 1);
+  }
+
+  function makeItSunny() {
+    setConditions("sunny");
+  }
+  function makeItRainy() {
+    setConditions("rainy");
+  }
+
+  return (
+    <div>
+      <h1>Today's Weather</h1>
+      <ul>
+        <li>Temperature will be {temperature}°C</li>
+        <li>The conditions will be {conditions}</li>
+      </ul>
+
+      <hr />
+      <button onClick={makeItHotter}>+</button>
+      <button onClick={makeItColder}>-</button>
+      <button onClick={makeItSunny}>Make it sunny</button>
+      <button onClick={makeItRainy}>Make it rainy</button>
+    </div>
+  );
+}
+
+When do you use Props or State?
+We've looked at the 2 main ways of managing data in our React
+components. But when should we use props and when should we use state?
+
+Remember that props are like "arguments" to a component. 
+It's good practice to make sure that you don't modify arguments 
+after you receive them. Just like state, React prevents you from 
+mutating them. Let's have a look at an example
+
+function Greeting(props) {
+  function handleThing() {
+    props.name = "Mozart";
+  }
+
+  return (
+    <div>
+      <p>Hello {props.name}</p>
+      <button onClick={handleThing}>Click me</button>
+    </div>
+  );
+}
+
+When you click the button, you might expect the name prop 
+to change to "Mozart".
+But it doesn't! React has made props read-only, which is a
+reminder that we shouldn't change props.
+
+If we were allowed to change props, React doesn't have a way of
+telling that we've changed the data. Our UI is now stale - not up-to-date
+with the latest data - and has no way of knowing that it has to re-render.
+
+From this we can get a clue about when to use state. If data changes over
+time, then we need to use state. My rule of thumb is that I always use props
+until I know that it needs to change over time, then I convert it to state.
+
+Further Reading
+What happens if you forget to pass a prop to a component?
+Or if you pass the wrong type of data to a component? Sometimes
+React will just render an empty element but sometimes it could 
+throw an error! This is why propTypes are useful. This page on 
+the React documentation describes how to use propTypes in more detail.
