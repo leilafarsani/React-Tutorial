@@ -483,3 +483,94 @@ function CreateAccountForm() {
 
 We now have three different inputs named username, email and password.
 There is a corresponding state variable and change handler function for each value.
+
+Inlining event handlers
+We could make our code a bit shorter if we inlined our event handlers
+
+<input
+  type="text"
+  name="username"
+  placeholder="Username"
+  value={username}
+  onChange={(event) => setUsername(event.target.value)}
+/>
+
+Centralising event handlers
+Sometimes we need to put all of our update logic in one function,
+ maybe because we need to validate the user's input before we set it in state.
+
+We can use a single handleChange function, that is reused to keep
+track of changes for all of the form fields. 
+To be able to tell which <input> is being updated, 
+we check the event.target.name field. This corresponds to the name 
+attribute on the <input> (e.g. <input name="username">).
+
+Based on this value, we then decide which state to update
+
+function handleChange(event) {
+  if (event.target.name === "username") {
+    setUsername(event.target.value);
+  } else if (event.target.name === "email") {
+    setEmail(event.target.value);
+  } else if (event.target.name === "password") {
+    setPassword(event.target.value);
+  }
+}
+
+Form submission
+So far, our form examples don't have a way of sending the user
+data back to the server, so that we can store it in the database.
+
+We will be using a special submit event triggered on the <form>
+element. This event is triggered when the user clicks a submit 
+button or if they hit the Enter key. 
+Let's take a look at an example
+
+function CreateAccountForm() {
+
+  ...
+
+  function handleSubmit(event) {
+    event.preventDefault();
+
+    console.log("Sending data to server");
+
+    fetch("https://httpstat.us/200", {
+      method: "POST",
+      body: JSON.stringify({
+        username: username,
+        email: email,
+        password: password
+      }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      ...
+      <button>Submit</button>
+    </form>
+  );
+}
+
+We set up our <form> to handle the event by passing the handleSubmit
+function to the onSubmit prop. If we click on the Submit button or
+hit Enter while focused on the form, the event is triggered and the 
+handleSubmit function is called.
+
+The first thing we do inside the handler function is 
+call event.preventDefault(). This is necessary because 
+the browser has a default action when the submit event
+is triggered on the form to send a GET request to the server.
+We prevent the default action because we will handle the event ourselves.
+
+We can then do whatever we want with our user data! In this example,
+we're sending a POST request using the fetch method.
+
+Further Reading
+Container components
+There is a common pattern when loading data in React applications,
+called container components.
