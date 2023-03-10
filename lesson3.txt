@@ -335,3 +335,151 @@ is a re-render and useEffect has been passed an empty array []
 
     return <img src={imgSrc} />;
   }
+
+useEffect dependencies array
+
+To solve this problem, we can tell React to queue the effect
+on the first render and when a dependency changes. We do this
+by adding the dependency variable to the array
+
+function MartianImageFetcher(props) {
+  const [imgSrc, setImgSrc] = useState(null);
+
+  useEffect(() => {
+    ...
+  }, [props.photoDate]);
+
+  ...
+}
+
+Now when the photoDate prop changes, React knows that the effect
+must be run again, this time with the 2020 date. Because of this
+behaviour, the second argument to useEffect is called the dependencies
+argument. We use it whenever we have something in our effect function 
+that depends on a variable outside of the effect function.
+
+Here's a diagram showing when the useEffect callback will be run:
+
+To help you understand this better, try "playing computer" again,
+but this time think about what happens when we use [props.photoDate] 
+for the dependencies argument. Think carefully about what changes with
+step 6 after we click the 2020 button.
+
+ESLint rules for React Hooks
+As you may have noticed, VSCode highlighted the empty dependencies array
+when you changed the URL passed to fetch in PokemonMoves.
+
+This is because your React application is using the rules from 
+eslint-plugin-react-hooks, a package created by the developers
+who make React. It helps you to find bugs in React Hooks code by
+highlighting places where you might be missing dependencies.
+
+If you see a red squiggly line underneath your useEffect dependencies
+array, you can hover your mouse over and it will tell you which variable
+is missing so you can add it to the dependencies array. Here's an example:
+
+Working with forms in React
+Modern web applications often involve interacting with 
+forms such as creating an account, adding a blog post 
+or posting a comment. This would involve using inputs,
+buttons and various form elements and being able to get 
+the values entered by users to do something with it 
+(like display them on a page or send them in a POST request). 
+So, how do we do this in React?
+
+Controlled component pattern
+A popular pattern for building forms and collect user data is 
+the controlled component pattern. A pattern is a repeated solution
+to a problem that is useful in multiple similar cases. 
+Let's have a look at an example 
+
+function SimpleReminder() {
+  const [reminder, setReminder] = useState("");
+
+  function handleChange(event) {
+    setReminder(event.target.value);
+  }
+
+  return (
+    <form>
+      <input
+        type="text"
+        placeholder="Some reminder"
+        value={reminder}
+        onChange={handleChange}
+      />
+      <p>Today I need to remember to... {reminder}</p>
+    </form>
+  );
+}
+
+We're controlling the value of the input by using the value from the reminder state. 
+This means that we can only change the value by updating the state.
+It is done using the onChange attribute and the handleChange function
+which is called every time the input value changes (typically 
+when a new character is added or removed).
+If we didn't call setReminder in the handleChange function, 
+then the input's value would never change and it would appear
+as if you couldn't type in the input! Finally, the value we 
+keep in the reminder state is displayed on the screen as today's reminder.
+
+In addition, instead of just saving the value of the input 
+in the state, we could have also transformed the string before 
+we set it with setReminder, for example by calling toUpperCase() 
+on the string.
+
+Form with Multiple Fields
+Let's have a look at a more complex example where we want
+ to build a form to let users enter information to create
+a personal account
+
+function CreateAccountForm() {
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  function handleUsernameChange(event) {
+    setUsername(event.target.value);
+  }
+  function handleEmailChange(event) {
+    setEmail(event.target.value);
+  }
+  function handlePasswordChange(event) {
+    setPassword(event.target.value);
+  }
+
+  return (
+    <form>
+      <div>
+        <input
+          type="text"
+          name="username"
+          placeholder="Username"
+          value={username}
+          onChange={handleUsernameChange}
+        />
+      </div>
+      <div>
+        <input
+          type="text"
+          name="email"
+          placeholder="Email"
+          value={email}
+          onChange={handleEmailChange}
+        />
+      </div>
+      <div>
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={password}
+          onChange={handlePasswordChange}
+        />
+      </div>
+    </form>
+  );
+}
+
+We now have three different inputs named username, email and password.
+There is a corresponding state variable and change handler function for each value.
