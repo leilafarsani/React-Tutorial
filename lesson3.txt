@@ -3,13 +3,18 @@ Learning Objectives
 Data fetching
 Show some data from an API in a component.
 
-Can explain why a loading state is necessary when fetching data as the result is not available on the initial render
-Be able to trigger fetch() using the useEffect() callback, with an empty array ([]) as the 2nd dependencies argument
+Can explain why a loading state is necessary when fetching
+data as the result is not available on the initial render
+Be able to trigger fetch() using the useEffect() callback,
+with an empty array ([]) as the 2nd dependencies argument
 Be able to store data from a successful API call in state
 Allow effects to update in response to prop changes
-Explain why a component with an effect dependent on props is broken with empty useEffect() dependencies ([])
-Be able to fix a component with an effect dependent on props using the useEffect() dependencies
-Can describe the "lifecycle" of a component with useEffect() when props change
+Explain why a component with an effect dependent on props is
+broken with empty useEffect() dependencies ([])
+Be able to fix a component with an effect dependent on props
+using the useEffect() dependencies
+Can describe the "lifecycle" of a component with useEffect()
+when props change
 
 Forms
 Create a simple form in React using the controlled component pattern
@@ -19,4 +24,121 @@ Can explain why the input does not change when typing if onChange is not set
 Be able to update the state using an onChange handler
 Use data from a submitted form to update the application
 Be able to handle an onSubmit event to the form
-Be able to collect the form state variables and use them (setting state, POST request)
+Be able to collect the form state variables and use them
+(setting state, POST request)
+
+Fetching Data in React
+Often when you create a React app, you will want to fetch data from an
+API and display it inside your components. How do we do this in React?
+You might think that we could just fetch the data in the component
+like this, but unfortunately it won't work
+
+This code won't work!
+
+function MartianPhotoFetcher() {
+  let imgSrc = null;
+
+  fetch(
+    `https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?earth_date=2015-6-3&api_key=DEMO_KEY`
+  )
+    .then((res) => res.json())
+    .then((data) => {
+      imgSrc = data.photos[0].img_src;
+    });
+
+  console.log(`The image src is ${imgSrc}`);
+  return <img src={imgSrc} />;
+}
+This is because React is synchronous, while fetch is asynchronous.
+If we look in the console, we'll see that the imgSrc will always 
+be null when we try to render it. React will try to render before 
+fetch has had time to get the data from the API.
+
+We need a way of running the fetch call after we have rendered for 
+the first time, so that it is not racing against React updating the DOM. 
+Then once we have got the data back we can use state to tell
+React to re-render with the new data.
+
+The way we do this is with another Hook, provided by React. This one is called useEffect.
+
+Importing useEffect
+Just like useState, we will import useEffect into our file like this
+
+import React, { useEffect } from "react";
+
+console.log(useEffect);
+
+import React, { useState, useEffect } from "react";
+
+Using useEffect
+Now let's look at how to use the useEffect Hook 
+
+function MartianPhotoFetcher() {
+  useEffect(() => {
+    fetch(
+      `https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?earth_date=2015-6-3&api_key=DEMO_KEY`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+      });
+  }, []); // Always remember to put an empty array here!
+
+  return <div>Hello useEffect!</div>;
+}
+
+The useEffect Hook takes two arguments:
+
+A callback function, where we can put our fetch call. 
+In this example, we're fetching some data from the NASA API! 🚀
+An array, which we'll look at later but is very important that you don't forget it!
+
+NOTE
+When writing your useEffect, write the "skeleton" first,
+then fill in the callback function later.
+
+// Write this bit first!
+useEffect(() => {
+  // Write this bit later!
+}, []);
+
+You might have noticed that we still haven't rendered the data 
+from the API. We now need to tell React to re-render once we get 
+the data. This sounds like a job for state!
+
+Let's look an example of how we can use state and useEffect to do this
+
+function MartianPhotoFetcher() {
+  const [marsPhotoData, setMarsPhotoData] = useState(null);
+
+  useEffect(() => {
+    console.log("Fetching data from NASA");
+
+    fetch(
+      `https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?earth_date=2015-6-3&api_key=DEMO_KEY`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        setMarsPhotoData(data);
+      });
+  }, []);
+
+  if (marsPhotoData) {
+    return <img src={marsPhotoData.photos[0].img_src} alt="Martian surface" />;
+  } else {
+    return null;
+  }
+}
+
+The timeline of this component is now what we wanted at the start:
+
+The component renders for the first time. Notice that we are returning
+null here: if a component returns null, then React will render nothing on-screen
+After rendering, the useEffect callback is run, so it fetches data from the NASA API
+When the response is received, we update the state
+This causes a re-render so that we can show the data on-screen
+You might notice that even though we re-rendered, we did not run
+the useEffect a second time. The way we've set it up, 
+useEffect will only
+run after the first time a component renders. 
+We'll look at controlling this in more detail later.
